@@ -1,0 +1,41 @@
+# Users
+from djongo import models
+
+class Team(models.Model):
+	_id = models.ObjectIdField()
+	name = models.CharField(max_length=100, unique=True)
+	class Meta:
+		db_table = 'teams'
+
+class User(models.Model):
+	_id = models.ObjectIdField()
+	name = models.CharField(max_length=100)
+	email = models.EmailField(unique=True)
+	team = models.CharField(max_length=100)  # Store team name for reference
+	class Meta:
+		db_table = 'users'
+
+class Activity(models.Model):
+	_id = models.ObjectIdField()
+	user_email = models.EmailField()  # Store user email for reference
+	type = models.CharField(max_length=100)
+	duration = models.IntegerField()  # minutes
+	calories = models.IntegerField()
+	date = models.DateField()
+	class Meta:
+		db_table = 'activities'
+
+class Workout(models.Model):
+	_id = models.ObjectIdField()
+	name = models.CharField(max_length=100)
+	description = models.TextField()
+	difficulty = models.CharField(max_length=50)
+	class Meta:
+		db_table = 'workouts'
+
+class Leaderboard(models.Model):
+	_id = models.ObjectIdField()
+	team = models.CharField(max_length=100)  # Store team name for reference
+	points = models.IntegerField()
+	class Meta:
+		db_table = 'leaderboard'
