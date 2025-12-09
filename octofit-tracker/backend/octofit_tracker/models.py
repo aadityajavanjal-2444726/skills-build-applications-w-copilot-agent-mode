@@ -1,24 +1,41 @@
-from django.db import models
+# Users
+from djongo import models
 
 class Team(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+	_id = models.ObjectIdField()
+	name = models.CharField(max_length=100, unique=True)
+	class Meta:
+		db_table = 'teams'
 
 class User(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='members')
+	_id = models.ObjectIdField()
+	name = models.CharField(max_length=100)
+	email = models.EmailField(unique=True)
+	team = models.CharField(max_length=100)  # Store team name for reference
+	class Meta:
+		db_table = 'users'
 
 class Activity(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities')
-    type = models.CharField(max_length=100)
-    duration = models.IntegerField()  # minutes
-    date = models.DateField()
+	_id = models.ObjectIdField()
+	user_email = models.EmailField()  # Store user email for reference
+	type = models.CharField(max_length=100)
+	duration = models.IntegerField()  # minutes
+	calories = models.IntegerField()
+	date = models.DateField()
+	class Meta:
+		db_table = 'activities'
 
 class Workout(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    suggested_for = models.ManyToManyField(Team, related_name='workouts')
+	_id = models.ObjectIdField()
+	name = models.CharField(max_length=100)
+	description = models.TextField()
+	difficulty = models.CharField(max_length=50)
+	class Meta:
+		db_table = 'workouts'
 
 class Leaderboard(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='leaderboards')
-    points = models.IntegerField(default=0)
+	_id = models.ObjectIdField()
+	team = models.CharField(max_length=100)  # Store team name for reference
+	points = models.IntegerField()
+	class Meta:
+		db_table = 'leaderboard'

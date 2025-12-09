@@ -3,40 +3,46 @@ from octofit_tracker.models import User, Team, Activity, Workout, Leaderboard
 from django.utils import timezone
 
 class Command(BaseCommand):
-    help = 'Populate the octofit_db database with test data'
+	help = 'Populate the octofit_db database with test data'
 
-    def handle(self, *args, **kwargs):
-        # Clear existing data
-        Activity.objects.all().delete()
-        User.objects.all().delete()
-        Team.objects.all().delete()
-        Workout.objects.all().delete()
-        Leaderboard.objects.all().delete()
+	def handle(self, *args, **options):
+		# Clear existing data
+		Activity.objects.all().delete()
+		User.objects.all().delete()
+		Team.objects.all().delete()
+		Workout.objects.all().delete()
+		Leaderboard.objects.all().delete()
 
-        # Create teams
-        marvel = Team.objects.create(name='Marvel')
-        dc = Team.objects.create(name='DC')
+		# Create teams
+		Team.objects.create(name='Marvel')
+		Team.objects.create(name='DC')
 
-        # Create users
-        spiderman = User.objects.create(name='Spider-Man', email='spiderman@marvel.com', team=marvel)
-        ironman = User.objects.create(name='Iron Man', email='ironman@marvel.com', team=marvel)
-        batman = User.objects.create(name='Batman', email='batman@dc.com', team=dc)
-        superman = User.objects.create(name='Superman', email='superman@dc.com', team=dc)
+		# Create users
+		users = [
+			{'name': 'Spider-Man', 'email': 'spiderman@marvel.com', 'team': 'Marvel'},
+			{'name': 'Iron Man', 'email': 'ironman@marvel.com', 'team': 'Marvel'},
+			{'name': 'Wonder Woman', 'email': 'wonderwoman@dc.com', 'team': 'DC'},
+			{'name': 'Batman', 'email': 'batman@dc.com', 'team': 'DC'},
+		]
+		for u in users:
+			User.objects.create(**u)
 
-        # Create activities
-        Activity.objects.create(user=spiderman, type='Running', duration=30, date=timezone.now().date())
-        Activity.objects.create(user=ironman, type='Cycling', duration=45, date=timezone.now().date())
-        Activity.objects.create(user=batman, type='Swimming', duration=25, date=timezone.now().date())
-        Activity.objects.create(user=superman, type='Weightlifting', duration=60, date=timezone.now().date())
+		# Create activities
+		activities = [
+			{'user_email': 'spiderman@marvel.com', 'type': 'Running', 'duration': 30, 'calories': 300, 'date': timezone.now().date()},
+			{'user_email': 'ironman@marvel.com', 'type': 'Cycling', 'duration': 45, 'calories': 450, 'date': timezone.now().date()},
+			{'user_email': 'wonderwoman@dc.com', 'type': 'Swimming', 'duration': 60, 'calories': 600, 'date': timezone.now().date()},
+			{'user_email': 'batman@dc.com', 'type': 'Yoga', 'duration': 40, 'calories': 200, 'date': timezone.now().date()},
+		]
+		for a in activities:
+			Activity.objects.create(**a)
 
-        # Create workouts
-        w1 = Workout.objects.create(name='Hero Training', description='Intense workout for heroes')
-        w2 = Workout.objects.create(name='Power Session', description='Strength and endurance')
-        w1.suggested_for.set([marvel, dc])
-        w2.suggested_for.set([marvel, dc])
+		# Create workouts
+		Workout.objects.create(name='Cardio Blast', description='High intensity cardio workout', difficulty='Hard')
+		Workout.objects.create(name='Strength Builder', description='Strength training for all levels', difficulty='Medium')
 
-        # Create leaderboard
-        Leaderboard.objects.create(team=marvel, points=200)
-        Leaderboard.objects.create(team=dc, points=180)
+		# Create leaderboard
+		Leaderboard.objects.create(team='Marvel', points=750)
+		Leaderboard.objects.create(team='DC', points=800)
 
-        self.stdout.write(self.style.SUCCESS('Test data populated successfully.'))
+		self.stdout.write(self.style.SUCCESS('octofit_db populated with test data.'))
